@@ -91,8 +91,8 @@ function RegisterPage() {
     };
 
     const roles = [
-        { value: 'rider', label: 'Rider', description: 'Book and manage your rides' },
-        { value: 'driver', label: 'Driver', description: 'Accept and complete ride assignments' }
+        { value: 'dispatcher', label: 'Dispatcher', description: 'Operations manager - assign bookings and manage rides' },
+        { value: 'admin', label: 'Administrator', description: 'System administrator - full system access' }
     ];
 
     return (

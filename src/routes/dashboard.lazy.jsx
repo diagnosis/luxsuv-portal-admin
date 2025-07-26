@@ -111,9 +111,9 @@ function Dashboard() {
                             <div className="bg-white p-6 rounded-lg shadow-md text-gray-800">
                                 <h3 className="text-xl font-bold mb-3">👥 User Management</h3>
                                 <p className="text-gray-600 mb-4">Manage all system users and roles</p>
-                                <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                <Link to="/admin" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 inline-block">
                                     View Users
-                                </button>
+                                </Link>
                             </div>
                             <div className="bg-white p-6 rounded-lg shadow-md text-gray-800">
                                 <h3 className="text-xl font-bold mb-3">📊 System Stats</h3>
@@ -132,30 +132,28 @@ function Dashboard() {
                         </div>
                     )}
 
-                    {(isDispatcher || isSuperDriver) && (
+                    {isDispatcher && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                             <div className="bg-white p-6 rounded-lg shadow-md text-gray-800">
                                 <h3 className="text-xl font-bold mb-3">🚗 Booking Management</h3>
                                 <p className="text-gray-600 mb-4">View and assign bookings to drivers</p>
-                                <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                <Link to="/driver" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 inline-block">
                                     Manage Bookings
-                                </button>
+                                </Link>
                             </div>
                             <div className="bg-white p-6 rounded-lg shadow-md text-gray-800">
                                 <h3 className="text-xl font-bold mb-3">👨‍💼 Driver Operations</h3>
                                 <p className="text-gray-600 mb-4">Monitor driver performance and availability</p>
-                                <button className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                                <Link to="/admin" className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 inline-block">
                                     View Drivers
-                                </button>
+                                </Link>
                             </div>
                         </div>
                     )}
                     {/* Bookings section */}
                     <div className="bg-white p-6 rounded-lg shadow-md text-gray-800">
                         <h2 className="text-2xl font-bold mb-4">
-                            {isAdmin ? 'System Overview' : 
-                             isDispatcher ? 'Recent Bookings' : 
-                             'My Bookings'}
+                            {isAdmin ? 'System Overview' : 'Recent Bookings'}
                         </h2>
                         <div className="space-y-4">
                             {data && data.length > 0 ? (
@@ -194,9 +192,7 @@ function Dashboard() {
                                     <div className="text-gray-400 text-6xl mb-4">📋</div>
                                     <p className="text-gray-500 text-lg mb-4">No bookings found</p>
                                     <p className="text-gray-400 text-sm">
-                                        {isAdmin ? 'System bookings will appear here' : 
-                                         isDispatcher ? 'New bookings will appear here for assignment' : 
-                                         'Your bookings will appear here'}
+                                        {isAdmin ? 'System bookings will appear here' : 'New bookings will appear here for assignment'}
                                     </p>
                                 </div>
                             )}

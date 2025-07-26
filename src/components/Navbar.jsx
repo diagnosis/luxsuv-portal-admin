@@ -24,8 +24,6 @@ function Navbar() {
                 <div className='flex items-center space-x-6'>
                     <ul className='flex space-x-4'>
                         <li><Link to='/dashboard' className='hover:text-blue-200'>Dashboard</Link></li>
-                        <li><Link to='/book-ride' className='hover:text-blue-200'>Book Ride</Link></li>
-                        <li><Link to='/bookings' className='hover:text-blue-200'>My Bookings</Link></li>
                         <li><Link to='/driver' className='hover:text-blue-200'>Driver</Link></li>
                         <li><Link to='/admin' className='hover:text-blue-200'>Admin</Link></li>
                     </ul>

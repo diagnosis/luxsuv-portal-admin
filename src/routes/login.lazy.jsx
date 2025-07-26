@@ -5,6 +5,8 @@ import {useState} from "react";
 import {useForm} from "@tanstack/react-form";
 
 
+import { Link } from '@tanstack/react-router';
+
 export const Route = createLazyFileRoute('/login')({
     beforeLoad: async () => {
         try {
