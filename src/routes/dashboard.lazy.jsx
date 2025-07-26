@@ -10,7 +10,7 @@ export const Route = createLazyFileRoute('/dashboard')({
         try {
             const userData = await checkAuth();
             console.log('Auth successful, user data:', userData);
-            return { userData };
+            return userData;
         } catch (error) {
             console.log('Auth failed:', error.message);
             throw redirect({ 
@@ -25,20 +25,9 @@ export const Route = createLazyFileRoute('/dashboard')({
 });
 
 function Dashboard() {
-    const loaderData = Route.useLoaderData();
-    const userData = loaderData?.userData;
+    const userData = Route.useRouteContext();
     
-    // Add loading state while userData is undefined
-    if (!userData) {
-        return (
-            <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
-                <div className="text-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-4"></div>
-                    <p>Loading dashboard...</p>
-                </div>
-            </div>
-        );
-    }
+    console.log('Dashboard userData:', userData);
     
     const isAdmin = userData?.role === 'admin' || userData?.is_admin;
     const isDispatcher = userData?.role === 'dispatcher';
