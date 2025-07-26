@@ -51,3 +51,4 @@ export default async function getBookings() {
             console.error('Bookings fetch error status:', error.response?.status);
             throw new Error(error.response?.data?.error || error.message || 'Network error');
         }
+}
