@@ -28,7 +28,7 @@ apiClient.interceptors.request.use((config) => {
 export default async function getBookings() {
         try {
             console.log('Fetching bookings...');
-            const res = await apiClient.get('/bookings');
+            const res = await apiClient.get('/api/bookings');
             console.log('Bookings response:', {
                 status: res.status,
                 dataLength: res.data?.length || 0,
