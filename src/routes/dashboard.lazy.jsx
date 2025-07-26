@@ -5,12 +5,24 @@ import getBookings from '../api/bookings.js';
 export const Route = createLazyFileRoute('/dashboard')({
     component: Dashboard,
     beforeLoad: async () => {
+        console.log('Dashboard beforeLoad - checking auth...');
         const res = await fetch('https://luxsuv-v4.onrender.com/users/me', { credentials: 'include' });
-        console.log('beforeLoad response status:', res.status); // Debug
+        console.log('Auth check response:', {
+            status: res.status,
+            statusText: res.statusText,
+            headers: Object.fromEntries(res.headers.entries())
+        });
+        
         if (!res.ok) {
-            console.log('Auth failed, redirecting to login');
+            console.log('Auth failed - Status:', res.status);
+            const errorText = await res.text();
+            console.log('Auth error response:', errorText);
             throw redirect({ to: '/login' }); // Redirect instead of error
         }
+        
+        const userData = await res.json();
+        console.log('Auth successful, user data:', userData);
+        return userData;
     },
 });
 

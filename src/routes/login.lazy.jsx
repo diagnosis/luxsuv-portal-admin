@@ -18,8 +18,11 @@ function LoginPage() {
     const mutation = useMutation({
         mutationFn: ({ email, password }) => login(email, password),
         onSuccess: () => {
-            console.log('login successful, cookie set');
-            navigate({ to: '/dashboard', replace: true });
+            console.log('Login successful, navigating to dashboard');
+            // Add a small delay to ensure cookies are set
+            setTimeout(() => {
+                navigate({ to: '/dashboard', replace: true });
+            }, 100);
         },
         onError: (error) => {
             console.error('login error', error);
