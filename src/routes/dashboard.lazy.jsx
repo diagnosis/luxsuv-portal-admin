@@ -47,6 +47,12 @@ function Dashboard() {
         );
     }
     
+    console.log('Dashboard rendering with data:', {
+        userData,
+        bookingsData: data,
+        bookingsCount: data?.length || 0
+    });
+
     if (error) {
         return (
             <div className="text-red-500 text-center bg-red-100 p-4 rounded-lg">
