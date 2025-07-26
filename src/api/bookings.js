@@ -16,7 +16,8 @@ const apiClient = axios.create({
 export default async function getBookings() {
         try {
             console.log('Fetching bookings...');
-            console.log('Using cookies for authentication (sent automatically)');
+        const token = getToken();
+        console.log('Token available for bookings:', token ? 'Yes' : 'No');
             
             const res = await apiClient.get('/bookings/my');
             console.log('Bookings response:', {

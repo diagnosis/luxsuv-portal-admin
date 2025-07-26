@@ -24,6 +24,13 @@ export async function  login(email, password) {
         });
         
         console.log('Login response data:', res.data);
+        
+        // Store token from response for immediate use
+        if (res.data.token) {
+            console.log('Storing token from login response');
+            localStorage.setItem('luxsuv_token', res.data.token);
+        }
+        
         console.log('Authentication cookie should be set by backend');
         
         if (res.status !== 200) throw new Error(
@@ -56,6 +63,10 @@ export async function checkAuth() {
 
 export async function logout() {
     try {
+        // Clear localStorage token
+        localStorage.removeItem('luxsuv_token');
+        console.log('Cleared token from localStorage');
+        
         await apiClient.post('/logout', {});
         console.log('Logout successful - backend should clear cookies');
     } catch (error) {
