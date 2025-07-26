@@ -2,19 +2,44 @@ import axios from "axios";
 
 const baseURL = 'https://luxsuv-v4.onrender.com'
 
+// Get token from cookie
+function getTokenFromCookie() {
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+        const [name, value] = cookie.split('=').map(c => c.trim());
+        if (name === 'luxsuv_token') {
+            return value;
+        }
+    }
+    return null;
+}
+
+// Create axios instance with interceptors
+const apiClient = axios.create({
+    baseURL,
+    withCredentials: true,
+    headers: {
+        'Content-Type': 'application/json',
+    },
+});
+
+// Add request interceptor to include token in Authorization header
+apiClient.interceptors.request.use((config) => {
+    const token = getTokenFromCookie();
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+        console.log('Adding Authorization header with token:', token.substring(0, 20) + '...');
+    }
+    return config;
+});
 
 export async function  login(email, password) {
     try{
         console.log('Attempting login for:', email);
-        const res = await axios.post(`${baseURL}/login`, {
+        const res = await apiClient.post('/login', {
             email:email,
             password:password,
-        }, {
-            withCredentials: true,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
+        });
         console.log('Login response:', {
             status: res.status,
             headers: Object.fromEntries(
@@ -25,6 +50,13 @@ export async function  login(email, password) {
             ),
             data: res.data
         });
+        
+        // Check if token is set in cookies after login
+        setTimeout(() => {
+            const token = getTokenFromCookie();
+            console.log('Token after login:', token ? token.substring(0, 20) + '...' : 'No token found');
+        }, 100);
+        
         if (res.status !== 200) throw new Error(
             `Error logging in: ${res.status}`
         )
@@ -38,12 +70,10 @@ export async function  login(email, password) {
 export async function checkAuth() {
     try {
         console.log('Checking authentication...');
-        const res = await axios.get(`${baseURL}/users/me`, {
-            withCredentials: true,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+        const token = getTokenFromCookie();
+        console.log('Token available for auth check:', token ? 'Yes' : 'No');
+        
+        const res = await apiClient.get('/users/me');
         console.log('Auth check response:', {
             status: res.status,
             data: res.data,
@@ -58,9 +88,9 @@ export async function checkAuth() {
 
 export async function logout() {
     try {
-        await axios.post(`${baseURL}/logout`, {}, {
-            withCredentials: true,
-        });
+        await apiClient.post('/logout', {});
+        // Clear any local token storage if needed
+        console.log('Logout successful');
     } catch (error) {
         console.error('Logout error:', error);
     }
