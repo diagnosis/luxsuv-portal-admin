@@ -36,6 +36,7 @@ function Dashboard() {
     const { data, isLoading, error } = useQuery({
         queryKey: ['bookings'],
         queryFn: getBookings,
+        enabled: !!userData, // Only fetch when userData is available
         retry: (failureCount, error) => {
             // Don't retry if it's an auth error
             if (error.message.includes('401') || error.message.includes('Unauthorized')) {
