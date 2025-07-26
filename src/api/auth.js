@@ -56,7 +56,38 @@ export async function checkAuth() {
         return res.data;
     } catch (error) {
         console.error('Auth check failed:', error.response?.data);
-        throw new Error(error.response?.data?.error || error.message || 'Authentication failed');
+        
+        // Enhanced error message construction
+        let errorMessage = 'Authentication failed';
+        
+        if (error.response) {
+            // Backend responded with an error
+            const { status, data } = error.response;
+            
+            if (data?.error) {
+                errorMessage = data.error;
+            } else {
+                // Use HTTP status codes for more descriptive messages
+                switch (status) {
+                    case 401:
+                        errorMessage = 'Unauthorized - Invalid or expired token';
+                        break;
+                    case 403:
+                        errorMessage = 'Forbidden - Insufficient permissions';
+                        break;
+                    case 500:
+                        errorMessage = 'Server Error - Please try again later';
+                        break;
+                    default:
+                        errorMessage = `HTTP ${status} - Authentication failed`;
+                }
+            }
+        } else if (error.message) {
+            // Network or other error
+            errorMessage = `Network Error: ${error.message}`;
+        }
+        
+        throw new Error(errorMessage);
     }
 
 }
