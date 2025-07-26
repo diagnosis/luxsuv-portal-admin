@@ -14,6 +14,17 @@ function getTokenFromCookie() {
     return null;
 }
 
+// Get token from cookie or localStorage
+function getToken() {
+    // First try cookie
+    const tokenFromCookie = getTokenFromCookie();
+    if (tokenFromCookie) {
+        return tokenFromCookie;
+    }
+    
+    // Fallback to localStorage
+    return localStorage.getItem('luxsuv_token');
+}
 // Create axios instance with interceptors
 const apiClient = axios.create({
     baseURL,
@@ -25,17 +36,19 @@ const apiClient = axios.create({
 
 // Add request interceptor to include token in Authorization header
 apiClient.interceptors.request.use((config) => {
-    const token = getTokenFromCookie();
+    const token = getToken();
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
         console.log('Adding Authorization header for bookings request');
+    } else {
+        console.log('No token found for bookings request');
     }
     return config;
 });
 export default async function getBookings() {
         try {
             console.log('Fetching bookings...');
-            const token = getTokenFromCookie();
+            const token = getToken();
             console.log('Token available for bookings:', token ? 'Yes' : 'No');
             
             const res = await apiClient.get('/bookings/my');
