@@ -1,5 +1,10 @@
 import axios from "axios";
 
+// Helper function to get token from localStorage
+function getToken() {
+    return localStorage.getItem('luxsuv_token');
+}
+
 const baseURL = 'https://luxsuv-v4.onrender.com'
 
 // Create axios instance with interceptors
@@ -16,10 +21,19 @@ const apiClient = axios.create({
 export default async function getBookings() {
         try {
             console.log('Fetching bookings...');
-        const token = getToken();
-        console.log('Token available for bookings:', token ? 'Yes' : 'No');
+            const token = getToken();
+            console.log('Token available for bookings:', token ? 'Yes' : 'No');
             
-            const res = await apiClient.get('/bookings/my');
+            // Add Authorization header if token exists
+            const config = {};
+            if (token) {
+                config.headers = {
+                    'Authorization': `Bearer ${token}`
+                };
+                console.log('Adding Authorization header for bookings request');
+            }
+            
+            const res = await apiClient.get('/bookings/my', config);
             console.log('Bookings response:', {
                 status: res.status,
                 dataLength: res.data?.length || 0,
