@@ -2,29 +2,6 @@ import axios from "axios";
 
 const baseURL = 'https://luxsuv-v4.onrender.com'
 
-// Get token from cookie
-function getTokenFromCookie() {
-    const cookies = document.cookie.split(';');
-    for (let cookie of cookies) {
-        const [name, value] = cookie.split('=').map(c => c.trim());
-        if (name === 'luxsuv_token') {
-            return value;
-        }
-    }
-    return null;
-}
-
-// Get token from cookie or localStorage
-function getToken() {
-    // First try cookie
-    const tokenFromCookie = getTokenFromCookie();
-    if (tokenFromCookie) {
-        return tokenFromCookie;
-    }
-    
-    // Fallback to localStorage
-    return localStorage.getItem('luxsuv_token');
-}
 // Create axios instance with interceptors
 const apiClient = axios.create({
     baseURL,
@@ -34,22 +11,12 @@ const apiClient = axios.create({
     },
 });
 
-// Add request interceptor to include token in Authorization header
-apiClient.interceptors.request.use((config) => {
-    const token = getToken();
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-        console.log('Adding Authorization header for bookings request');
-    } else {
-        console.log('No token found for bookings request');
-    }
-    return config;
-});
+// Note: Cookies are sent automatically with withCredentials: true
+
 export default async function getBookings() {
         try {
             console.log('Fetching bookings...');
-            const token = getToken();
-            console.log('Token available for bookings:', token ? 'Yes' : 'No');
+            console.log('Using cookies for authentication (sent automatically)');
             
             const res = await apiClient.get('/bookings/my');
             console.log('Bookings response:', {
