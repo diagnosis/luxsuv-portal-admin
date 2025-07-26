@@ -13,19 +13,49 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 
+const RegisterLazyRouteImport = createFileRoute('/register')()
 const LoginLazyRouteImport = createFileRoute('/login')()
+const DriverLazyRouteImport = createFileRoute('/driver')()
 const DashboardLazyRouteImport = createFileRoute('/dashboard')()
+const BookingsLazyRouteImport = createFileRoute('/bookings')()
+const BookRideLazyRouteImport = createFileRoute('/book-ride')()
+const AdminLazyRouteImport = createFileRoute('/admin')()
 
+const RegisterLazyRoute = RegisterLazyRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() => import('./routes/register.lazy').then((d) => d.Route))
 const LoginLazyRoute = LoginLazyRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any).lazy(() => import('./routes/login.lazy').then((d) => d.Route))
+const DriverLazyRoute = DriverLazyRouteImport.update({
+  id: '/driver',
+  path: '/driver',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() => import('./routes/driver.lazy').then((d) => d.Route))
 const DashboardLazyRoute = DashboardLazyRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any).lazy(() => import('./routes/dashboard.lazy').then((d) => d.Route))
+const BookingsLazyRoute = BookingsLazyRouteImport.update({
+  id: '/bookings',
+  path: '/bookings',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() => import('./routes/bookings.lazy').then((d) => d.Route))
+const BookRideLazyRoute = BookRideLazyRouteImport.update({
+  id: '/book-ride',
+  path: '/book-ride',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() => import('./routes/book-ride.lazy').then((d) => d.Route))
+const AdminLazyRoute = AdminLazyRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() => import('./routes/admin.lazy').then((d) => d.Route))
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -34,36 +64,88 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminLazyRoute
+  '/book-ride': typeof BookRideLazyRoute
+  '/bookings': typeof BookingsLazyRoute
   '/dashboard': typeof DashboardLazyRoute
+  '/driver': typeof DriverLazyRoute
   '/login': typeof LoginLazyRoute
+  '/register': typeof RegisterLazyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminLazyRoute
+  '/book-ride': typeof BookRideLazyRoute
+  '/bookings': typeof BookingsLazyRoute
   '/dashboard': typeof DashboardLazyRoute
+  '/driver': typeof DriverLazyRoute
   '/login': typeof LoginLazyRoute
+  '/register': typeof RegisterLazyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminLazyRoute
+  '/book-ride': typeof BookRideLazyRoute
+  '/bookings': typeof BookingsLazyRoute
   '/dashboard': typeof DashboardLazyRoute
+  '/driver': typeof DriverLazyRoute
   '/login': typeof LoginLazyRoute
+  '/register': typeof RegisterLazyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/login'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/book-ride'
+    | '/bookings'
+    | '/dashboard'
+    | '/driver'
+    | '/login'
+    | '/register'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/login'
-  id: '__root__' | '/' | '/dashboard' | '/login'
+  to:
+    | '/'
+    | '/admin'
+    | '/book-ride'
+    | '/bookings'
+    | '/dashboard'
+    | '/driver'
+    | '/login'
+    | '/register'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/book-ride'
+    | '/bookings'
+    | '/dashboard'
+    | '/driver'
+    | '/login'
+    | '/register'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminLazyRoute: typeof AdminLazyRoute
+  BookRideLazyRoute: typeof BookRideLazyRoute
+  BookingsLazyRoute: typeof BookingsLazyRoute
   DashboardLazyRoute: typeof DashboardLazyRoute
+  DriverLazyRoute: typeof DriverLazyRoute
   LoginLazyRoute: typeof LoginLazyRoute
+  RegisterLazyRoute: typeof RegisterLazyRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -71,11 +153,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/driver': {
+      id: '/driver'
+      path: '/driver'
+      fullPath: '/driver'
+      preLoaderRoute: typeof DriverLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bookings': {
+      id: '/bookings'
+      path: '/bookings'
+      fullPath: '/bookings'
+      preLoaderRoute: typeof BookingsLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/book-ride': {
+      id: '/book-ride'
+      path: '/book-ride'
+      fullPath: '/book-ride'
+      preLoaderRoute: typeof BookRideLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -90,8 +200,13 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminLazyRoute: AdminLazyRoute,
+  BookRideLazyRoute: BookRideLazyRoute,
+  BookingsLazyRoute: BookingsLazyRoute,
   DashboardLazyRoute: DashboardLazyRoute,
+  DriverLazyRoute: DriverLazyRoute,
   LoginLazyRoute: LoginLazyRoute,
+  RegisterLazyRoute: RegisterLazyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

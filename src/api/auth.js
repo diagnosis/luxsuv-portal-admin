@@ -123,3 +123,58 @@ export async function logout() {
     }
 }
 
+export async function register(userData) {
+    try {
+        console.log('Attempting registration for:', userData.email);
+        
+        const res = await apiClient.post('/register', userData);
+        
+        console.log('Registration response data:', res.data);
+        
+        if (res.status !== 200) {
+            throw new Error(`Error registering: ${res.status}`);
+        }
+        
+        return res.data;
+    } catch (e) {
+        console.error('Registration error details:', e.response?.data);
+        throw new Error(e.response?.data?.error || e.message);
+    }
+}
+
+export async function changePassword(currentPassword, newPassword) {
+    try {
+        const res = await apiClient.put('/users/me/password', {
+            current_password: currentPassword,
+            new_password: newPassword
+        });
+        
+        return res.data;
+    } catch (error) {
+        console.error('Password change error:', error.response?.data);
+        throw new Error(error.response?.data?.error || error.message);
+    }
+}
+
+export async function forgotPassword(email) {
+    try {
+        const res = await apiClient.post('/auth/forgot-password', { email });
+        return res.data;
+    } catch (error) {
+        console.error('Forgot password error:', error.response?.data);
+        throw new Error(error.response?.data?.error || error.message);
+    }
+}
+
+export async function resetPassword(resetToken, newPassword) {
+    try {
+        const res = await apiClient.post('/auth/reset-password', {
+            reset_token: resetToken,
+            new_password: newPassword
+        });
+        return res.data;
+    } catch (error) {
+        console.error('Reset password error:', error.response?.data);
+        throw new Error(error.response?.data?.error || error.message);
+    }
+}

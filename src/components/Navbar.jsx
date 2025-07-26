@@ -21,20 +21,23 @@ function Navbar() {
         <nav className='bg-blue-600 p-4 text-white'>
             <div className='container mx-auto flex justify-between items-center'>
                 <h2 className='text-xl font-bold'>LuxSUV Portal</h2>
-                <ul className='flex space-x-4'>
-                    <li><Link to='/' className='hover:text-blue-200'>Home</Link></li>
-                    <li><Link to='/login' className='hover:text-blue-200'>Login</Link></li>
-                    <li><Link to='/dashboard' className='hover:text-blue-200'>Dashboard</Link></li>
-                    <li><Link to='/users' className='hover:text-blue-200'>Users</Link></li>
-                    <li>
+                <div className='flex items-center space-x-6'>
+                    <ul className='flex space-x-4'>
+                        <li><Link to='/dashboard' className='hover:text-blue-200'>Dashboard</Link></li>
+                        <li><Link to='/book-ride' className='hover:text-blue-200'>Book Ride</Link></li>
+                        <li><Link to='/bookings' className='hover:text-blue-200'>My Bookings</Link></li>
+                        <li><Link to='/driver' className='hover:text-blue-200'>Driver</Link></li>
+                        <li><Link to='/admin' className='hover:text-blue-200'>Admin</Link></li>
+                    </ul>
+                    <div>
                         <button 
                             onClick={handleLogout}
-                            className='hover:text-blue-200 cursor-pointer'
+                            className='bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded transition-colors'
                         >
                             Logout
                         </button>
-                    </li>
-                </ul>
+                    </div>
+                </div>
 
             </div>
 

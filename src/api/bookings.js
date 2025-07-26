@@ -5,6 +5,87 @@ function getToken() {
     return localStorage.getItem('luxsuv_token');
 }
 
+export async function createBooking(bookingData) {
+    try {
+        console.log('Creating booking:', bookingData);
+        const res = await apiClient.post('/book-ride', bookingData);
+        
+        if (res.status !== 200) {
+            throw new Error(`Failed to create booking: ${res.status}`);
+        }
+        
+        return res.data;
+    } catch (error) {
+        console.error('Create booking error:', error.response?.data);
+        throw new Error(error.response?.data?.error || error.message);
+    }
+}
+
+export async function getMyBookings() {
+    try {
+        console.log('Fetching my bookings...');
+        const res = await apiClient.get('/bookings/my');
+        
+        if (res.status !== 200) {
+            throw new Error(`Failed to fetch bookings: ${res.status}`);
+        }
+        
+        return res.data;
+    } catch (error) {
+        console.error('My bookings fetch error:', error.response?.data);
+        throw new Error(error.response?.data?.error || error.message);
+    }
+}
+
+export async function updateBooking(bookingId, updates) {
+    try {
+        console.log('Updating booking:', bookingId, updates);
+        const res = await apiClient.put(`/bookings/${bookingId}`, updates);
+        
+        if (res.status !== 200) {
+            throw new Error(`Failed to update booking: ${res.status}`);
+        }
+        
+        return res.data;
+    } catch (error) {
+        console.error('Update booking error:', error.response?.data);
+        throw new Error(error.response?.data?.error || error.message);
+    }
+}
+
+export async function cancelBooking(bookingId, reason = '') {
+    try {
+        console.log('Cancelling booking:', bookingId, reason);
+        const res = await apiClient.delete(`/bookings/${bookingId}/cancel`, {
+            data: { reason }
+        });
+        
+        if (res.status !== 200) {
+            throw new Error(`Failed to cancel booking: ${res.status}`);
+        }
+        
+        return res.data;
+    } catch (error) {
+        console.error('Cancel booking error:', error.response?.data);
+        throw new Error(error.response?.data?.error || error.message);
+    }
+}
+
+export async function getBookingsByEmail(email) {
+    try {
+        console.log('Fetching bookings by email:', email);
+        const res = await apiClient.get(`/bookings/email/${encodeURIComponent(email)}`);
+        
+        if (res.status !== 200) {
+            throw new Error(`Failed to fetch bookings: ${res.status}`);
+        }
+        
+        return res.data;
+    } catch (error) {
+        console.error('Bookings by email fetch error:', error.response?.data);
+        throw new Error(error.response?.data?.error || error.message);
+    }
+}
 const baseURL = 'https://luxsuv-v4.onrender.com'
 
 // Create axios instance with interceptors
