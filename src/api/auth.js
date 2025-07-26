@@ -55,8 +55,6 @@ export async function checkAuth() {
         });
         return res.data;
     } catch (error) {
-        console.error('Auth check failed:', error.response?.data);
-        
         // Enhanced error message construction
         let errorMessage = 'Authentication failed';
         
@@ -86,6 +84,8 @@ export async function checkAuth() {
             // Network or other error
             errorMessage = `Network Error: ${error.message}`;
         }
+        
+        console.error('Auth check failed:', errorMessage);
         
         throw new Error(errorMessage);
     }
