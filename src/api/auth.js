@@ -11,10 +11,18 @@ export async function  login(email, password) {
             password:password,
         }, {
             withCredentials: true,
+            headers: {
+                'Content-Type': 'application/json',
+            },
         })
         console.log('Login response:', {
             status: res.status,
-            headers: res.headers,
+            headers: Object.fromEntries(
+                Object.entries(res.headers).filter(([key]) => 
+                    key.toLowerCase().includes('cookie') || 
+                    key.toLowerCase().includes('set-cookie')
+                )
+            ),
             data: res.data
         });
         if (res.status !== 200) throw new Error(
@@ -25,8 +33,36 @@ export async function  login(email, password) {
         console.error('Login error details:', e.response?.data);
         throw new Error(e.response?.data?.error || e.message);
     }
+}
 
+export async function checkAuth() {
+    try {
+        console.log('Checking authentication...');
+        const res = await axios.get(`${baseURL}/users/me`, {
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        console.log('Auth check response:', {
+            status: res.status,
+            data: res.data,
+        });
+        return res.data;
+    } catch (error) {
+        console.error('Auth check failed:', error.response?.data);
+        throw new Error(error.response?.data?.error || error.message || 'Authentication failed');
+    }
 
 }
 
+export async function logout() {
+    try {
+        await axios.post(`${baseURL}/logout`, {}, {
+            withCredentials: true,
+        });
+    } catch (error) {
+        console.error('Logout error:', error);
+    }
+}
 
