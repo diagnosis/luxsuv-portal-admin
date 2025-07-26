@@ -28,13 +28,14 @@ apiClient.interceptors.request.use((config) => {
 export default async function getBookings() {
         try {
             console.log('Fetching bookings...');
-            const res = await apiClient.get('/api/bookings');
+            const res = await apiClient.get('/dispatcher/bookings/all');
             console.log('Bookings response:', {
                 status: res.status,
-                dataLength: res.data?.length || 0,
+                dataLength: res.data?.bookings?.length || 0,
             });
             if (res.status !== 200) throw new Error(`Failed to fetch bookings: ${res.status}`);
-            return res.data;
+            // The dispatcher endpoint returns { bookings: [...], count: number }
+            return res.data.bookings || [];
         }
         catch (error) {
             console.error('Bookings fetch error:', error.response?.data);
