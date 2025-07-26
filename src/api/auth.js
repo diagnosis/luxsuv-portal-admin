@@ -16,14 +16,14 @@ function getTokenFromCookie() {
 
 // Get token from cookie or localStorage
 function getToken() {
-    // First try cookie
-    const tokenFromCookie = getTokenFromCookie();
-    if (tokenFromCookie) {
-        return tokenFromCookie;
+    // For cross-origin requests, use localStorage first
+    const localToken = localStorage.getItem('luxsuv_token');
+    if (localToken) {
+        return localToken;
     }
     
-    // Fallback to localStorage
-    return localStorage.getItem('luxsuv_token');
+    // Fallback to cookie (only works if same domain)
+    return getTokenFromCookie();
 }
 // Create axios instance with interceptors
 const apiClient = axios.create({
@@ -50,45 +50,37 @@ export async function  login(email, password) {
     try{
         console.log('Attempting login for:', email);
         
-        // Log all cookies before login
-        console.log('Cookies before login:', document.cookie);
-        
         const res = await apiClient.post('/login', {
             email:email,
             password:password,
         });
-        console.log('Login response:', {
-            status: res.status,
-            headers: Object.fromEntries(
-                Object.entries(res.headers).filter(([key]) => 
-                    key.toLowerCase().includes('cookie') || 
-                    key.toLowerCase().includes('set-cookie')
-                )
-            ),
-            data: res.data
-        });
         
-        // Log all cookies after login
-        console.log('Cookies after login:', document.cookie);
+        console.log('Login response data:', res.data);
         
-        // Check if token is in response data and store it manually if needed
-        if (res.data && res.data.token) {
-            console.log('Token found in response data, storing manually');
-            // Store in localStorage as fallback
-            localStorage.setItem('luxsuv_token', res.data.token);
-            // Try to set cookie manually
-            document.cookie = `luxsuv_token=${res.data.token}; path=/; max-age=86400`;
+        // Store token from response data
+        let token = null;
+        
+        // Try to extract token from various possible response formats
+        if (res.data?.token) {
+            token = res.data.token;
+            console.log('Token found in response.token');
+        } else if (res.data?.access_token) {
+            token = res.data.access_token;
+            console.log('Token found in response.access_token');
+        } else if (res.data?.jwt) {
+            token = res.data.jwt;
+            console.log('Token found in response.jwt');
+        } else {
+            console.log('No token found in response data, checking cookies...');
         }
         
-        // Check if token is set in cookies after login
-        setTimeout(() => {
-            const token = getTokenFromCookie();
-            console.log('Token after login:', token ? token.substring(0, 20) + '...' : 'No token found');
-            
-            // Also check localStorage
-            const localToken = localStorage.getItem('luxsuv_token');
-            console.log('Token in localStorage:', localToken ? localToken.substring(0, 20) + '...' : 'No token in localStorage');
-        }, 100);
+        if (token) {
+            console.log('Storing token in localStorage:', token.substring(0, 20) + '...');
+            localStorage.setItem('luxsuv_token', res.data.token);
+        } else {
+            console.warn('No token found in login response!');
+            console.log('Full response data:', res.data);
+        }
         
         if (res.status !== 200) throw new Error(
             `Error logging in: ${res.status}`
