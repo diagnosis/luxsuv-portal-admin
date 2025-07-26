@@ -5,13 +5,12 @@ import { checkAuth } from '../api/auth.js';
 import Navbar from '../components/Navbar.jsx';
 
 export const Route = createLazyFileRoute('/dashboard')({
-    component: Dashboard,
     beforeLoad: async ({ location }) => {
         console.log('Dashboard beforeLoad - checking auth...');
         try {
             const userData = await checkAuth();
             console.log('Auth successful, user data:', userData);
-            return userData;
+            return { userData };
         } catch (error) {
             console.log('Auth failed:', error.message);
             throw redirect({ 
@@ -22,13 +21,28 @@ export const Route = createLazyFileRoute('/dashboard')({
             });
         }
     },
+    component: Dashboard,
 });
 
 function Dashboard() {
-    const userData = Route.useLoaderData();
-    const isAdmin = userData.role === 'admin' || userData.is_admin;
-    const isDispatcher = userData.role === 'dispatcher';
-    const isSuperDriver = userData.role === 'super_driver';
+    const loaderData = Route.useLoaderData();
+    const userData = loaderData?.userData;
+    
+    // Add loading state while userData is undefined
+    if (!userData) {
+        return (
+            <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-4"></div>
+                    <p>Loading dashboard...</p>
+                </div>
+            </div>
+        );
+    }
+    
+    const isAdmin = userData?.role === 'admin' || userData?.is_admin;
+    const isDispatcher = userData?.role === 'dispatcher';
+    const isSuperDriver = userData?.role === 'super_driver';
     
     const { data, isLoading, error } = useQuery({
         queryKey: ['bookings'],
@@ -82,10 +96,10 @@ function Dashboard() {
                                      isSuperDriver ? 'Super Driver Dashboard' : 'Dashboard'}
                                 </h1>
                                 <p className="text-blue-100">
-                                    Welcome back, {userData.username} ({userData.email})
+                                    Welcome back, {userData?.username} ({userData?.email})
                                 </p>
                                 <p className="text-blue-200 text-sm capitalize">
-                                    Role: {userData.role.replace('_', ' ')}
+                                    Role: {userData?.role?.replace('_', ' ')}
                                 </p>
                             </div>
                             <div className="text-right">
