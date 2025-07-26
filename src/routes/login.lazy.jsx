@@ -1,11 +1,21 @@
-import {createLazyFileRoute, useNavigate} from '@tanstack/react-router';
+import {createLazyFileRoute, useNavigate, redirect} from '@tanstack/react-router';
 import {useMutation, useQuery} from "@tanstack/react-query";
-import {login} from "../api/auth.js";
+import {login, checkAuth} from "../api/auth.js";
 import {useState} from "react";
 import {useForm} from "@tanstack/react-form";
 
 
 export const Route = createLazyFileRoute('/login')({
+    beforeLoad: async () => {
+        try {
+            const userData = await checkAuth();
+            console.log('Already authenticated, redirecting to dashboard:', userData);
+            throw redirect({ to: '/dashboard' });
+        } catch (error) {
+            // Not authenticated, stay on login page
+            console.log('Not authenticated, showing login page');
+        }
+    },
     component: LoginPage,
 });
 
@@ -42,38 +52,53 @@ function LoginPage() {
 
     return (
         <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-            <div className="bg-white p-6 rounded-lg shadow-md max-w-md w-full space-y-4">
-                <h2 className="text-2xl font-bold text-center text-gray-800">Sign In to LuxSUV</h2>
+            <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+                <div className="text-center mb-8">
+                    <h1 className="text-3xl font-bold text-gray-800 mb-2">LuxSUV Portal</h1>
+                    <p className="text-gray-600">Admin & Dispatcher Management</p>
+                </div>
+                
+                <h2 className="text-xl font-semibold text-center text-gray-800 mb-6">Sign In</h2>
+                
                 {error && <p className="text-red-500 text-center">{error}</p>}
-                <form onSubmit={handleSubmit}>
-                    <div>
+                
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="space-y-2">
                         <label className="block text-sm font-medium text-gray-700">Email</label>
                         <input
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full p-2 border-2 border-gray-300 rounded focus:border-blue-500 focus:outline-none text-black"
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-black"
                             disabled={mutation.isPending}
+                            placeholder="admin@luxsuv.com"
                         />
                     </div>
-                    <div>
+                    <div className="space-y-2">
                         <label className="block text-sm font-medium text-gray-700">Password</label>
                         <input
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full p-2 border-2 border-gray-300 rounded focus:border-blue-500 focus:outline-none text-black"
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-black"
                             disabled={mutation.isPending}
+                            placeholder="Enter your password"
                         />
                     </div>
                     <button
                         type="submit"
-                        className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed"
+                        className="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed transition-colors"
                         disabled={mutation.isPending}
                     >
                         {mutation.isPending ? 'Signing In...' : 'Sign In'}
                     </button>
                 </form>
+                
+                <div className="mt-6 pt-6 border-t border-gray-200">
+                    <p className="text-sm text-gray-500 text-center">
+                        Test accounts: admin@luxsuv.test / dispatcher@luxsuv.test
+                    </p>
+                </div>
             </div>
         </div>
     );
