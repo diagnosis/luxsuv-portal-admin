@@ -11,8 +11,26 @@ const apiClient = axios.create({
     },
 });
 
-// Note: Cookies are sent automatically with withCredentials: true
-// No need to manually add Authorization headers
+// Request interceptor to add Authorization header from localStorage
+apiClient.interceptors.request.use((config) => {
+    const token = localStorage.getItem('luxsuv_token');
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+});
+
+// Response interceptor to handle auth errors
+apiClient.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response?.status === 401) {
+            // Clear invalid token
+            localStorage.removeItem('luxsuv_token');
+        }
+        return Promise.reject(error);
+    }
+);
 
 export async function  login(email, password) {
     try{

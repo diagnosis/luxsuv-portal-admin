@@ -16,24 +16,19 @@ const apiClient = axios.create({
     },
 });
 
-// Note: Cookies are sent automatically with withCredentials: true
+// Request interceptor to add Authorization header from localStorage
+apiClient.interceptors.request.use((config) => {
+    const token = localStorage.getItem('luxsuv_token');
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+});
 
 export default async function getBookings() {
         try {
             console.log('Fetching bookings...');
-            const token = getToken();
-            console.log('Token available for bookings:', token ? 'Yes' : 'No');
-            
-            // Add Authorization header if token exists
-            const config = {};
-            if (token) {
-                config.headers = {
-                    'Authorization': `Bearer ${token}`
-                };
-                console.log('Adding Authorization header for bookings request');
-            }
-            
-            const res = await apiClient.get('/bookings/my', config);
+            const res = await apiClient.get('/bookings/my');
             console.log('Bookings response:', {
                 status: res.status,
                 dataLength: res.data?.length || 0,
